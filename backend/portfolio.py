@@ -1,14 +1,24 @@
+from typing import Optional
 from main import Stock
-from datetime import date
+
 
 
 class Portfolio:
     def __init__(self):
-        self.stocks = []
+        self.stocks = {}
 
     def add(self, stock: Stock):
-        self.stocks.append(stock)
-
-portfolio = Portfolio()
-portfolio.add(Stock(symbol="AAPL", name="Apple Inc.", quantity=10, purchase_price=175.0, purchase_date=date(2024, 1, 15)))
-print(portfolio.stocks)
+        self.stocks[stock.symbol] = stock
+    
+    def get(self, symbol: str) -> Optional[Stock]:
+        return self.stocks.get(symbol)
+    
+    def remove(self, symbol: str): 
+        if symbol in self.stocks:
+            del self.stocks[symbol]
+        else:
+            raise ValueError(f"{symbol} nicht im Portfolio gefunden")
+        
+    def total_purchase_value(self) -> float:
+        return sum(stock.purchase_value for stock in self.stocks.values())
+        

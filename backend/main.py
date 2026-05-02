@@ -1,0 +1,1 @@
+print("Depot Analyzer gestartet...")

@@ -1,5 +1,5 @@
 from typing import Optional
-from main import Stock
+from models import Stock
 
 
 

@@ -1,4 +1,4 @@
-from main import Stock
+from models import Stock
 from portfolio import Portfolio
 from datetime import date
 

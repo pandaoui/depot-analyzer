@@ -1,15 +1,18 @@
-from dataclasses import dataclass
 from datetime import date
 from typing import Optional
+from sqlalchemy.orm import Mapped, mapped_column
+from database import Base
 
-@dataclass
-class Stock:
-    symbol: str
-    name: str
-    quantity: float
-    purchase_price: float
-    purchase_date: date
-    current_price: Optional[float] = None
+
+class Stock(Base):
+    __tablename__ = "stocks"
+
+    symbol: Mapped[str] = mapped_column(primary_key=True)
+    name: Mapped[str]
+    quantity: Mapped[float]
+    purchase_price: Mapped[float]
+    purchase_date: Mapped[date]
+    current_price: Mapped[Optional[float]]
 
     @property
     def purchase_value(self) -> float:

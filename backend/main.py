@@ -2,6 +2,9 @@ from fastapi import FastAPI
 from portfolio import Portfolio
 from schemas import StockCreate
 from models import Stock
+from database import Base, engine
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 portfolio = Portfolio()

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from schemas import StockCreate
 from models import Stock
 from database import Base, SessionLocal, engine
@@ -36,3 +36,25 @@ def create_stock(stock_data: StockCreate, db: Session = Depends(get_db)):
     db.add(stock)
     db.commit()
     return {"message": f"Aktie {stock.symbol} hinzugefügt"}
+
+@app.delete("/stocks/{symbol}")
+def delete_stock(symbol: str, db: Session = Depends(get_db)):
+    stock = db.query(Stock).filter(Stock.symbol == symbol).first()
+    if stock is None:
+        raise HTTPException(status_code=404, detail=f"Aktie {symbol} nicht gefunden")
+    db.delete(stock)
+    db.commit()
+    return {"message": f"Aktie {symbol} gelöscht"}
+
+@app.put("/stocks/{symbol}")
+def update_stock(symbol: str, stock_data: StockCreate, db: Session = Depends(get_db)):
+    stock = db.query(Stock).filter(Stock.symbol == symbol).first()
+    if stock is None:
+        raise HTTPException(status_code=404, detail=f"Aktie {symbol} nicht gefunden")
+    stock.name = stock_data.name
+    stock.quantity = stock_data.quantity
+    stock.purchase_price = stock_data.purchase_price
+    stock.purchase_date = stock_data.purchase_date
+    stock.current_price = stock_data.current_price
+    db.commit()
+    return {"message": f"Aktie {symbol} aktualisiert"}

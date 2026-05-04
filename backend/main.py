@@ -3,6 +3,7 @@ from schemas import StockCreate
 from models import Stock
 from database import Base, SessionLocal, engine
 from sqlalchemy.orm import Session
+from fastapi.middleware.cors import CORSMiddleware
 
 def get_db():
     db = SessionLocal()
@@ -14,6 +15,13 @@ def get_db():
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def root():

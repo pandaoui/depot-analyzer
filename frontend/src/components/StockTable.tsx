@@ -1,14 +1,10 @@
-import { useState, useEffect } from "react"
 import type { Stock } from "../types/stock"
 
-function StockTable() {
-  const [stocks, setStocks] = useState<Stock[]>([])
+interface StockTableProps {
+    stocks: Stock[];
+  }
 
-  useEffect(() => {
-    fetch("http://localhost:8000/stocks")
-      .then(response => response.json())
-      .then(data => setStocks(data))
-  }, [])
+function StockTable({ stocks }: StockTableProps) {
 
   return (
   <div className="p-6">

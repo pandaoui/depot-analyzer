@@ -1,0 +1,95 @@
+import { useState } from "react";
+
+interface AddStockFormProps {
+  onStockAdded: () => void;
+}
+function AddStockForm({ onStockAdded }: AddStockFormProps) {
+  const [symbol, setSymbol] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [quantity, setQuantity] = useState<string>("");
+  const [purchasePrice, setPurchasePrice] = useState<string>("");
+  const [purchaseDate, setPurchaseDate] = useState<string>("");
+
+  const handleSubmit = async () => {
+    await fetch("http://localhost:8000/stocks", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        symbol: symbol,
+        name: name,
+        quantity: parseFloat(quantity),
+        purchase_price: parseFloat(purchasePrice),
+        purchase_date: purchaseDate,
+      }),
+    });
+    onStockAdded();
+    setSymbol("");
+    setName("");
+    setQuantity("");
+    setPurchasePrice("");
+    setPurchaseDate("");
+  };
+  
+  return (
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">Aktie hinzufügen</h2>
+      <div className="mb-3">
+        <label className="block text-sm font-medium mb-1">Symbol</label>
+        <input
+          type="text"
+          value={symbol}
+          onChange={(e) => setSymbol(e.target.value)}
+          className="border p-2 rounded w-full"
+          placeholder="z.B. AAPL"
+        />
+      </div>
+      <div className="mb-3">
+        <label className="block text-sm font-medium mb-1">Name</label>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="border p-2 rounded w-full"
+          placeholder="z.B. Apple Inc."
+        />
+      </div>
+      <div className="mb-3">
+        <label className="block text-sm font-medium mb-1">Menge</label>
+        <input
+          type="number"
+          value={quantity}
+          onChange={(e) => setQuantity(e.target.value)}
+          className="border p-2 rounded w-full"
+          placeholder="z.B. 10"
+        />
+      </div>
+      <div className="mb-3">
+        <label className="block text-sm font-medium mb-1">Kaufpreis</label>
+        <input
+          type="number"
+          value={purchasePrice}
+          onChange={(e) => setPurchasePrice(e.target.value)}
+          className="border p-2 rounded w-full"
+          placeholder="z.B. 150.00"
+        />
+      </div>
+      <div className="mb-3">
+        <label className="block text-sm font-medium mb-1">Kaufdatum</label>
+        <input
+          type="date"
+          value={purchaseDate}
+          onChange={(e) => setPurchaseDate(e.target.value)}
+          className="border p-2 rounded w-full"
+        />
+      </div>
+      <button
+        className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        onClick={handleSubmit}
+      >
+        Hinzufügen
+      </button>
+    </div>
+  );
+}
+
+export default AddStockForm;

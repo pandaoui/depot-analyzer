@@ -29,7 +29,7 @@ function AddStockForm({ onStockAdded }: AddStockFormProps) {
     setPurchasePrice("");
     setPurchaseDate("");
   };
-  
+
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Aktie hinzufügen</h2>

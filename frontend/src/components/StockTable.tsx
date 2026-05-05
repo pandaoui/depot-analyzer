@@ -3,15 +3,17 @@ import type { Stock } from "../types/stock";
 interface StockTableProps {
   stocks: Stock[];
   onStockDeleted: () => void;
+  onStockEdit: (stock: Stock) => void;
 }
 
-function StockTable({ stocks, onStockDeleted }: StockTableProps) {
+function StockTable({ stocks, onStockDeleted, onStockEdit }: StockTableProps) {
   const handleDelete = async (symbol: string) => {
     await fetch(`http://localhost:8000/stocks/${symbol}`, {
       method: "DELETE",
     });
     onStockDeleted();
   };
+
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Meine Aktien</h2>
@@ -38,6 +40,12 @@ function StockTable({ stocks, onStockDeleted }: StockTableProps) {
                   onClick={() => handleDelete(stock.symbol)}
                 >
                   Löschen
+                </button>
+                <button
+                  className="text-blue-500 hover:text-blue-700 ml-2"
+                  onClick={() => onStockEdit(stock)}
+                >
+                  Bearbeiten
                 </button>
               </td>
             </tr>

@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type { Stock } from "../types/stock";
 
 interface AddStockFormProps {
   onStockAdded: () => void;
+  selectedStock: Stock | null;
 }
-function AddStockForm({ onStockAdded }: AddStockFormProps) {
+function AddStockForm({ onStockAdded, selectedStock }: AddStockFormProps) {
   const [symbol, setSymbol] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [quantity, setQuantity] = useState<string>("");
@@ -11,17 +13,33 @@ function AddStockForm({ onStockAdded }: AddStockFormProps) {
   const [purchaseDate, setPurchaseDate] = useState<string>("");
 
   const handleSubmit = async () => {
-    await fetch("http://localhost:8000/stocks", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        symbol: symbol,
-        name: name,
-        quantity: parseFloat(quantity),
-        purchase_price: parseFloat(purchasePrice),
-        purchase_date: purchaseDate,
-      }),
-    });
+    if (selectedStock) {
+      // Update
+      await fetch(`http://localhost:8000/stocks/${selectedStock.symbol}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          symbol: symbol,
+          name: name,
+          quantity: parseFloat(quantity),
+          purchase_price: parseFloat(purchasePrice),
+          purchase_date: purchaseDate,
+        }),
+      });
+    } else {
+      // Neu erstellen
+      await fetch("http://localhost:8000/stocks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          symbol: symbol,
+          name: name,
+          quantity: parseFloat(quantity),
+          purchase_price: parseFloat(purchasePrice),
+          purchase_date: purchaseDate,
+        }),
+      });
+    }
     onStockAdded();
     setSymbol("");
     setName("");
@@ -30,9 +48,21 @@ function AddStockForm({ onStockAdded }: AddStockFormProps) {
     setPurchaseDate("");
   };
 
+  useEffect(() => {
+    if (selectedStock) {
+      setSymbol(selectedStock.symbol);
+      setName(selectedStock.name);
+      setQuantity(selectedStock.quantity.toString());
+      setPurchasePrice(selectedStock.purchase_price.toString());
+      setPurchaseDate(selectedStock.purchase_date);
+    }
+  }, [selectedStock]);
+
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Aktie hinzufügen</h2>
+      <h2 className="text-2xl font-bold mb-4">
+        {selectedStock ? "Aktie bearbeiten" : "Aktie hinzufügen"}
+      </h2>
       <div className="mb-3">
         <label className="block text-sm font-medium mb-1">Symbol</label>
         <input
@@ -86,7 +116,7 @@ function AddStockForm({ onStockAdded }: AddStockFormProps) {
         className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         onClick={handleSubmit}
       >
-        Hinzufügen
+        {selectedStock ? "Aktualisieren" : "Hinzufügen"}
       </button>
     </div>
   );

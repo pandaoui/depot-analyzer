@@ -23,6 +23,7 @@ function App() {
       <AddStockForm 
         onStockAdded={fetchStocks}
         selectedStock={selectedStock}
+        onClearSelection={() => setSelectedStock(null)}
       />
       <StockTable
         stocks={stocks}

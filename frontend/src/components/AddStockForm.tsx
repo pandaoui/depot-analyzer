@@ -4,8 +4,13 @@ import type { Stock } from "../types/stock";
 interface AddStockFormProps {
   onStockAdded: () => void;
   selectedStock: Stock | null;
+  onClearSelection: () => void;
 }
-function AddStockForm({ onStockAdded, selectedStock }: AddStockFormProps) {
+function AddStockForm({
+  onStockAdded,
+  selectedStock,
+  onClearSelection,
+}: AddStockFormProps) {
   const [symbol, setSymbol] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [quantity, setQuantity] = useState<string>("");
@@ -46,6 +51,15 @@ function AddStockForm({ onStockAdded, selectedStock }: AddStockFormProps) {
     setQuantity("");
     setPurchasePrice("");
     setPurchaseDate("");
+    onClearSelection();
+  };
+  const handleCancel = () => {
+    setSymbol("");
+    setName("");
+    setQuantity("");
+    setPurchasePrice("");
+    setPurchaseDate("");
+    onClearSelection();
   };
 
   useEffect(() => {
@@ -118,6 +132,14 @@ function AddStockForm({ onStockAdded, selectedStock }: AddStockFormProps) {
       >
         {selectedStock ? "Aktualisieren" : "Hinzufügen"}
       </button>
+      {selectedStock && (
+        <button
+          className="mt-4 ml-2 bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
+          onClick={handleCancel}
+        >
+          Abbrechen
+        </button>
+      )}
     </div>
   );
 }

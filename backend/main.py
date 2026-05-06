@@ -4,6 +4,7 @@ from models import Stock
 from database import Base, SessionLocal, engine
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
+import yfinance as yf
 
 def get_db():
     db = SessionLocal()
@@ -44,6 +45,26 @@ def create_stock(stock_data: StockCreate, db: Session = Depends(get_db)):
     db.add(stock)
     db.commit()
     return {"message": f"Aktie {stock.symbol} hinzugefügt"}
+
+@app.post("/stocks/refresh-prices")
+def refresh_prices(db: Session = Depends(get_db)):
+    stocks = db.query(Stock).all()
+    for stock in stocks:
+        ticker = yf.Ticker(stock.symbol)
+        info = ticker.info
+        price = info.get("currentPrice")
+        if price:
+            stock.current_price = price
+    db.commit()
+    return {"message": f"{len(stocks)} Kurse aktualisiert"}
+
+@app.get("/stocks/{symbol}/price")
+def get_stock_price(symbol: str):
+    ticker = yf.Ticker(symbol)
+    info = ticker.info
+    price = info.get("currentPrice")
+    name = info.get("longName") or info.get("shortName")
+    return {"symbol": symbol, "price": price, "name": name}
 
 @app.delete("/stocks/{symbol}")
 def delete_stock(symbol: str, db: Session = Depends(get_db)):

@@ -8,6 +8,9 @@ function App() {
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
 
   const fetchStocks = async () => {
+    await fetch("http://localhost:8000/stocks/refresh-prices", {
+      method: "POST",
+    });
     const response = await fetch("http://localhost:8000/stocks");
     const data = await response.json();
     setStocks(data);
@@ -20,7 +23,7 @@ function App() {
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold p-6 border-b">Depot Analyzer</h1>
-      <AddStockForm 
+      <AddStockForm
         onStockAdded={fetchStocks}
         selectedStock={selectedStock}
         onClearSelection={() => setSelectedStock(null)}

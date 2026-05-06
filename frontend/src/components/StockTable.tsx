@@ -35,7 +35,7 @@ function StockTable({ stocks, onStockDeleted, onStockEdit }: StockTableProps) {
               <td className="p-3">{stock.symbol}</td>
               <td className="p-3">{stock.name}</td>
               <td className="p-3">{stock.quantity}</td>
-              <td className="p-3">{stock.purchase_price}</td>
+              <td className="p-3">{stock.purchase_price.toFixed(2)} €</td>
               <td className="p-3">
                 {(stock.quantity * stock.purchase_price).toFixed(2)} €
               </td>
@@ -62,17 +62,48 @@ function StockTable({ stocks, onStockDeleted, onStockEdit }: StockTableProps) {
           ))}
         </tbody>
       </table>
-      <div className="mt-4 text-right">
-        <span className="font-medium">Gesamter Kaufwert: </span>
-        <span className="font-bold">
-          {stocks
-            .reduce(
-              (sum, stock) => sum + stock.quantity * stock.purchase_price,
-              0,
-            )
-            .toFixed(2)}{" "}
-          €{" "}
-        </span>
+      <div className="mt-4 border-t pt-4 flex justify-between">
+        <div>
+          <span className="text-sm text-gray-500">Gesamter Kaufwert</span>
+          <p className="font-bold text-lg">
+            {stocks
+              .reduce(
+                (sum, stock) => sum + stock.quantity * stock.purchase_price,
+                0,
+              )
+              .toFixed(2)}{" "}
+            €
+          </p>
+        </div>
+        <div>
+          <span className="text-sm text-gray-500">Aktueller Gesamtwert</span>
+          <p className="font-bold text-lg">
+            {stocks
+              .filter((stock) => stock.current_price)
+              .reduce(
+                (sum, stock) => sum + stock.quantity * stock.current_price!,
+                0,
+              )
+              .toFixed(2)}{" "}
+            €
+          </p>
+        </div>
+        <div>
+          <span className="text-sm text-gray-500">Profit/Loss</span>
+          <p className="font-bold text-lg">
+            {stocks
+              .filter((stock) => stock.current_price)
+              .reduce(
+                (sum, stock) =>
+                  sum +
+                  stock.quantity *
+                    (stock.current_price! - stock.purchase_price),
+                0,
+              )
+              .toFixed(2)}{" "}
+            €
+          </p>
+        </div>
       </div>
     </div>
   );

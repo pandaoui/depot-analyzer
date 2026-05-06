@@ -24,6 +24,8 @@ function StockTable({ stocks, onStockDeleted, onStockEdit }: StockTableProps) {
             <th className="text-left p-3">Name</th>
             <th className="text-left p-3">Anzahl</th>
             <th className="text-left p-3">Kaufpreis</th>
+            <th className="text-left p-3">Kaufsumme</th>
+            <th className="text-left p-3">Akt. Wert</th>
             <th className="text-left p-3">Aktionen</th>
           </tr>
         </thead>
@@ -34,6 +36,14 @@ function StockTable({ stocks, onStockDeleted, onStockEdit }: StockTableProps) {
               <td className="p-3">{stock.name}</td>
               <td className="p-3">{stock.quantity}</td>
               <td className="p-3">{stock.purchase_price}</td>
+              <td className="p-3">
+                {(stock.quantity * stock.purchase_price).toFixed(2)} €
+              </td>
+              <td className="p-3">
+                {stock.current_price
+                  ? (stock.quantity * stock.current_price).toFixed(2) + " €"
+                  : "—"}
+              </td>
               <td className="p-3">
                 <button
                   className="text-red-500 hover:text-red-700"
@@ -52,6 +62,18 @@ function StockTable({ stocks, onStockDeleted, onStockEdit }: StockTableProps) {
           ))}
         </tbody>
       </table>
+      <div className="mt-4 text-right">
+        <span className="font-medium">Gesamter Kaufwert: </span>
+        <span className="font-bold">
+          {stocks
+            .reduce(
+              (sum, stock) => sum + stock.quantity * stock.purchase_price,
+              0,
+            )
+            .toFixed(2)}{" "}
+          €{" "}
+        </span>
+      </div>
     </div>
   );
 }
